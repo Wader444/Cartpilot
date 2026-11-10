@@ -110,7 +110,7 @@ def solve(items: list[MatchedProduct], usable: dict[int, list[MatchCandidate]], 
     minimize(sum(cost))
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = time_limit_s
-    solver.parameters.num_workers = 4
+    solver.parameters.num_workers = 1          # deterministic: same input -> same plan
     status = (getattr(solver, "solve", None) or solver.Solve)(m)
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
         return None

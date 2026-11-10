@@ -3,8 +3,9 @@
 1. Exhaustive split search (every combination of apps, whole split costed, then single-item
    improvement moves) – always runs; it is the baseline and the safety net.
 2. OR-Tools CP-SAT model of the same problem (app/optimizer/cpsat.py) – used when the
-   `ortools` package is installed. Its plan is used only if it is at least as cheap as the
-   split search; otherwise the search result stands and the note says so.
+   `ortools` package is installed (single thread, so it is deterministic). If it finds a
+   strictly cheaper plan, that plan is used; if it reaches the same cost, the search plan is
+   kept and recorded as confirmed optimal; a worse plan is ignored and the note says so.
 3. Every chosen platform cart is re-checked with Member C's landed-cost engine
    (app/optimizer/landed_cost.py, integer paise); disagreements are reported in the notes.
 The Auditor still re-quotes real fees from the platforms before anything reaches the user.
@@ -96,10 +97,13 @@ def optimize_cart(items: list[MatchedProduct], constraints: OptimizationConstrai
             result.notes.append(f"OR-Tools CP-SAT failed ({type(e).__name__}); split search used")
         if assign is not None:
             candidate = _result_from(items, assign, constraints, search, "OR-Tools CP-SAT")
-            if candidate.total_landed <= search.total_landed + 0.01:
+            if candidate.total_landed < search.total_landed - 0.01:      # strictly cheaper -> use it
                 result = candidate
-                result.notes.append(f"OR-Tools CP-SAT optimum ₹{candidate.total_landed:.2f} "
+                result.notes.append(f"OR-Tools CP-SAT found a cheaper plan ₹{candidate.total_landed:.2f} "
                                     f"(split search ₹{search.total_landed:.2f})")
+            elif candidate.total_landed <= search.total_landed + 0.01:   # same cost -> keep the search plan
+                result.solver = "OR-Tools CP-SAT (confirmed optimum)"
+                result.notes.append(f"OR-Tools CP-SAT confirmed the optimum ₹{search.total_landed:.2f}")
             else:
                 result.notes.append(f"OR-Tools plan ₹{candidate.total_landed:.2f} was worse than the split search "
                                     f"₹{search.total_landed:.2f}; split search used")

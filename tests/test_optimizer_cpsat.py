@@ -46,7 +46,7 @@ def test_cpsat_never_worse_and_numbers_verified(text):
     pytest.importorskip("ortools")
     s, (items, c, pref) = _plan_inputs(text)
     search = fallback_optimize_cart(items, c, pref)
-    assert s.optimization.solver == "OR-Tools CP-SAT", s.optimization.notes
+    assert s.optimization.solver.startswith("OR-Tools CP-SAT"), s.optimization.notes
     assert s.optimization.total_landed <= search.total_landed + 0.01
     assert s.phase == Phase.AWAITING_APPROVAL and verify_proposal_numbers(s.proposal, s.trace) == []
 
@@ -94,3 +94,11 @@ def test_cpsat_matches_brute_force_optimum(text):
     assign = cpsat.solve(items, usable, allowed, c)
     got = opt._result_from(items, assign, c, fallback_optimize_cart(items, c), "cpsat").total_landed
     assert got == pytest.approx(best, abs=0.02)
+
+
+def test_cpsat_is_deterministic():
+    pytest.importorskip("ortools")
+    a, _ = _plan_inputs(BASKETS[2])
+    b, _ = _plan_inputs(BASKETS[2])
+    pick = lambda s: sorted((c.platform.value, i.listing.product_id) for c in s.proposal.carts for i in c.items)
+    assert pick(a) == pick(b) and a.proposal.total_landed == b.proposal.total_landed
