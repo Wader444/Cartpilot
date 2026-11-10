@@ -195,3 +195,23 @@ def edit(session_id: str, proposal_id: str, changes: dict) -> dict:
 
 def get_trace(session_id: str) -> dict:
     return _call("GET", f"/api/shopping/{session_id}/trace")
+
+
+# --------------------------------------------------------------------------- demo faults
+DEMO_GOAL = "Weekly groceries for 4 people, vegetarian, under ₹2,500, delivered before 9 PM."
+DEMO_FAULTS = [  # curd goes out of stock on Zepto and Blinkit adds a ₹15 surge between planning and verification
+    {"kind": "out_of_stock", "platform": "zepto", "sku_id": "curd-amul-400g", "after_calls": 1},
+    {"kind": "fee_spike", "platform": "blinkit", "after_calls": 1, "value": 15},
+]
+
+
+def set_demo_faults(enabled: bool) -> bool:
+    """Clear faults, then add the demo faults if enabled. Returns False if the server has faults disabled."""
+    try:
+        _call("DELETE", "/api/dev/faults")
+        if enabled:
+            for f in DEMO_FAULTS:
+                _call("POST", "/api/dev/faults", f)
+        return True
+    except ApiError:
+        return False

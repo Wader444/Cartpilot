@@ -223,6 +223,10 @@ class OptimizerTools:
         def run():
             if self._fn is not None:
                 try:
+                    import inspect
+
+                    if len(inspect.signature(self._fn).parameters) >= 3:  # optimizer accepts brand preferences
+                        return self._fn(items, constraints, preferred_brands)
                     return self._fn(items, constraints)
                 except Exception as e:  # keep the demo alive: fall back, but say so in the trace
                     r = fallback_optimize_cart(items, constraints, preferred_brands)

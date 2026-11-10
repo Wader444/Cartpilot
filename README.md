@@ -170,6 +170,28 @@ git checkout -b feature/planner && git push -u origin feature/planner
 - **Changed:** brands you approved before are now a *soft* preference (at most 10% extra per item). Preferred platforms break ties.
 - **Added:** the evaluation runner and 20 baskets. Fault injection is now off by default.
 
+## Run the full product (API + UI)
+
+```bash
+pip install -r requirements.txt
+# Terminal 1 – API (faults enabled only for the demo toggle)
+CARTPILOT_ENABLE_FAULTS=true CARTPILOT_FIXED_NOW=17:00 python -m uvicorn app.main:app --reload --reload-dir app
+# Terminal 2 – UI
+USE_MOCK=0 streamlit run ui/app.py
+```
+In the sidebar: **Load demo basket** → tick **Inject demo faults** → **Plan my cart** → open **Agent trace** → **Approve and prepare carts**.
+`python integration_check.py` runs Member B's data checks; `python scripts/demo.py` runs the whole story in the terminal.
+
+## Team
+
+| Member | Lane | Lives in |
+|---|---|---|
+| A – Agent & Backend | intent agent, planner, auditor, approval gate, memory, FastAPI, guardrails, integration | `app/agents/intent_agent.py`, `auditor_agent.py`, `app/planner/`, `app/tools/`, `app/memory/`, `app/api/` |
+| B – Data & Product Graph | catalog, platform adapter, Neo4j graph seed, `match_products` (graph → similarity → attribute rules), price history, test baskets | `data/`, `app/agents/matching.py`, `app/adapters/platform_adapter.py`, `app/agents/price_history.py`, `integration_check.py` |
+| C – Optimizer & UI | landed-cost engine (integer paise), unit price, Streamlit UI | `app/optimizer/`, `ui/` |
+
+How the lanes connect: the planner calls Member B's matcher through `app/agents/matching_agent.py` and Member C's optimizer through `app/optimizer/optimizer.py`. The split search evaluates every combination of apps (exact for 3 apps), and every chosen cart is re-checked with Member C's landed-cost engine. If a teammate module fails, the built-in fallback runs and the trace says so.
+
 ## Known limitations
 
 - The mock store and price history are **temporary** stand-ins until Member B's API is ready. Savings depend on the mock data.

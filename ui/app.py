@@ -1,6 +1,6 @@
 import streamlit as st
-from api_client import (USE_MOCK, ApiError, ClarificationNeeded, answer_clarification, approve,
-                        get_proposal, get_trace, reject)
+from api_client import (DEMO_GOAL, USE_MOCK, ApiError, ClarificationNeeded, answer_clarification, approve,
+                        edit, get_proposal, get_trace, reject, set_demo_faults)
 
 st.set_page_config(page_title="CartPilot", layout="wide")
 
@@ -46,9 +46,16 @@ def cost_card(p: dict) -> None:
 st.title("CartPilot")
 st.caption("Demo data is mock, realistic, and swappable through the PlatformAdapter.")
 
-goal = st.text_area("What do you need?",
-                    value="Weekly groceries for 2, veg, under ₹1,200, before 8 PM",
-                    height=80)
+with st.sidebar:
+    st.header("Demo")
+    if st.button("Load demo basket", key="demo_basket"):
+        st.session_state["goal"] = DEMO_GOAL
+    faults_on = st.checkbox("Inject demo faults (curd out of stock on Zepto, ₹15 Blinkit surge)",
+                            key="demo_faults", disabled=USE_MOCK)
+    st.caption("Faults need the API started with CARTPILOT_ENABLE_FAULTS=true.")
+
+st.session_state.setdefault("goal", "Weekly groceries for 2, veg, under ₹1,200, before 8 PM")
+goal = st.text_area("What do you need?", key="goal", height=80)
 
 def _plan(fn, *args):
     """Run a planner call and store the result; show clarification / errors in plain words."""
@@ -67,6 +74,8 @@ def _plan(fn, *args):
 
 if st.button("Plan my cart", type="primary"):
     with st.spinner("Planning..."):
+        if not USE_MOCK and not set_demo_faults(faults_on) and faults_on:
+            st.warning("The API has fault injection disabled – planning without demo faults.")
         _plan(get_proposal, goal)
 
 clarify = st.session_state.get("clarify")
@@ -123,9 +132,10 @@ def approval_panel(p: dict) -> None:
         else:
             st.warning(decision["message"])
         return
+    edit_panel(p)
     if not p.get("approvable"):
         st.error("This plan can't be approved as it is (over budget or nothing could be sourced). "
-                 "Change the goal and plan again.")
+                 "Edit it below or change the goal and plan again.")
         return
     confirmed = []
     for plat in p["platforms"]:
@@ -155,6 +165,33 @@ def approval_panel(p: dict) -> None:
         except ApiError as e:
             st.error(e.message)
         st.rerun()
+
+
+def edit_panel(p: dict) -> None:
+    with st.expander("Edit this plan"):
+        items = sorted({line["request_item"] for plat in p["platforms"] for line in plat["cart"]})
+        remove = st.multiselect("Remove items", items, key="edit_remove")
+        budget = st.number_input("New budget (₹, 0 = keep)", min_value=0, step=100, value=0, key="edit_budget")
+        brands = st.text_input("Brands to avoid (comma separated)", key="edit_brands")
+        if st.button("Re-plan with changes", key="edit_go"):
+            changes = {}
+            if remove:
+                changes["remove_items"] = list(remove)
+            if budget:
+                changes["budget"] = float(budget)
+            if brands.strip():
+                changes["reject_brands"] = [b.strip() for b in brands.split(",") if b.strip()]
+            if not changes:
+                st.warning("Choose at least one change.")
+                return
+            try:
+                with st.spinner("Re-planning..."):
+                    st.session_state["proposal"] = edit(p["session_id"], p["proposal_id"], changes)
+                st.session_state.pop("decision", None)
+            except ApiError as e:
+                st.error(e.message)
+                return
+            st.rerun()
 
 
 def trace_panel(session_id: str) -> None:
