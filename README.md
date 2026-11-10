@@ -139,6 +139,7 @@ The approval gate is also checked over 20 varied runs, and the invented-number c
 ## Evaluation (deck numbers)
 
 `python scripts/evaluate.py` runs the 20 baskets in `tests/baskets/baskets.json`, 8 of them with an injected fault. It writes `reports/eval_results.md` and `.json` with:
+- in how many baskets a split beat the best single app, and the average saving when it did
 - average saving vs. the best single app
 - constraint satisfaction
 - re-plan success
@@ -190,7 +191,7 @@ In the sidebar: **Load demo basket** → tick **Inject demo faults** → **Plan 
 | B – Data & Product Graph | catalog, platform adapter, Neo4j graph seed, `match_products` (graph → similarity → attribute rules), price history, test baskets | `data/`, `app/agents/matching.py`, `app/adapters/platform_adapter.py`, `app/agents/price_history.py`, `integration_check.py` |
 | C – Optimizer & UI | landed-cost engine (integer paise), unit price, Streamlit UI | `app/optimizer/`, `ui/` |
 
-How the lanes connect: the planner calls Member B's matcher through `app/agents/matching_agent.py` and Member C's optimizer through `app/optimizer/optimizer.py`. The split search evaluates every combination of apps (exact for 3 apps), and every chosen cart is re-checked with Member C's landed-cost engine. If a teammate module fails, the built-in fallback runs and the trace says so.
+How the lanes connect: the planner calls Member B's matcher through `app/agents/matching_agent.py` and Member C's optimizer through `app/optimizer/optimizer.py`. The optimizer solves the cart split as a constraint problem with **Google OR-Tools CP-SAT** (`app/optimizer/cpsat.py`: one listing per item, delivery thresholds, small-cart fees, one coupon per cart, deadline-feasible apps only). An exhaustive split search runs alongside it as a baseline and safety net; the CP-SAT plan is used only when it is at least as cheap, and every chosen cart is re-checked with Member C's landed-cost engine. Tests compare both against a brute-force optimum. If a teammate module fails, the built-in fallback runs and the trace says so.
 
 ## Known limitations
 

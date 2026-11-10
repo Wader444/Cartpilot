@@ -167,6 +167,11 @@ def run(baskets_path: str, labels: str | None) -> dict:
         "proposals": len(proposed),
         "avg_savings_pct_vs_best_single_app": round(mean(with_savings), 2) if with_savings else None,
         "max_savings_pct": max(with_savings) if with_savings else None,
+        "baskets_where_split_won": f"{sum(1 for r in proposed if len(r.get('platforms', [])) > 1 and (r.get('savings_pct') or 0) > 0)}/{len(proposed)}",
+        "avg_savings_pct_when_split_won": (round(mean(x for r in proposed for x in [r.get("savings_pct") or 0]
+                                                      if len(r.get("platforms", [])) > 1 and x > 0), 2)
+                                           if any(len(r.get("platforms", [])) > 1 and (r.get("savings_pct") or 0) > 0
+                                                  for r in proposed) else None),
         "constraint_satisfaction_pct": round(100 * sum(r["within_budget"] and r["deadline_met"] for r in proposed)
                                              / max(1, len(proposed)), 1),
         "replan_success_pct": round(100 * sum(r["recovered"] for r in faults) / max(1, len(faults)), 1),

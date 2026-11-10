@@ -92,9 +92,12 @@ PLATFORM_FACTOR = {Platform.BLINKIT: 1.00, Platform.ZEPTO: 0.985, Platform.INSTA
 # Each app is cheapest in a different aisle, so splitting can pay off – but only
 # when the saving beats the extra handling/delivery fees.
 CATEGORY_FACTOR = {
-    Platform.BLINKIT: {"produce": 0.84, "dairy": 1.03, "staples": 1.03},
-    Platform.ZEPTO: {"produce": 1.08, "dairy": 0.95, "staples": 1.04},
-    Platform.INSTAMART: {"produce": 1.06, "dairy": 1.05, "staples": 0.89},
+    Platform.BLINKIT: {"produce": 0.80, "bakery": 0.88, "snacks": 0.90,
+                       "dairy": 1.08, "staples": 1.08, "beverages": 1.06, "household": 1.05},
+    Platform.ZEPTO: {"dairy": 0.88, "beverages": 0.88, "eggs": 0.90, "dairy alternatives": 0.92,
+                     "produce": 1.12, "staples": 1.08, "household": 1.06},
+    Platform.INSTAMART: {"staples": 0.84, "household": 0.86, "meat": 0.92,
+                         "produce": 1.10, "dairy": 1.08, "snacks": 1.06, "bakery": 1.06},
 }
 
 FEE_SCHEDULES = {
