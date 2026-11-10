@@ -1,0 +1,105 @@
+{
+  "_note": "EXAMPLE ONLY \u2013 replace with Member B's hand-labelled pairs (\u226530, correct and incorrect). correct=true means the product is a valid match for the requested item.",
+  "pairs": [
+    {
+      "item": "milk",
+      "product_id": "milk-amul-1l",
+      "correct": true
+    },
+    {
+      "item": "milk",
+      "product_id": "milk-nandini-500ml",
+      "correct": true
+    },
+    {
+      "item": "milk",
+      "product_id": "milk-oat-1l",
+      "correct": false
+    },
+    {
+      "item": "milk",
+      "product_id": "paneer-milkymist-200g",
+      "correct": false
+    },
+    {
+      "item": "atta",
+      "product_id": "atta-aash-5kg",
+      "correct": true
+    },
+    {
+      "item": "wheat flour",
+      "product_id": "atta-pills-1kg",
+      "correct": true
+    },
+    {
+      "item": "rice",
+      "product_id": "rice-ig-1kg",
+      "correct": true
+    },
+    {
+      "item": "rice",
+      "product_id": "rice-sona-5kg",
+      "correct": true
+    },
+    {
+      "item": "dahi",
+      "product_id": "curd-amul-400g",
+      "correct": true
+    },
+    {
+      "item": "curd",
+      "product_id": "milk-amul-1l",
+      "correct": false
+    },
+    {
+      "item": "paneer",
+      "product_id": "tofu-200g",
+      "correct": false
+    },
+    {
+      "item": "paneer",
+      "product_id": "paneer-amul-200g",
+      "correct": true
+    },
+    {
+      "item": "tea",
+      "product_id": "coffee-bru-100g",
+      "correct": false
+    },
+    {
+      "item": "tea",
+      "product_id": "tea-redlabel-500g",
+      "correct": true
+    },
+    {
+      "item": "oil",
+      "product_id": "oil-saffola-1l",
+      "correct": true
+    },
+    {
+      "item": "eggs",
+      "product_id": "eggs-12",
+      "correct": true
+    },
+    {
+      "item": "bread",
+      "product_id": "bread-brit-400g",
+      "correct": true
+    },
+    {
+      "item": "biscuits",
+      "product_id": "chips-lays-90g",
+      "correct": false
+    },
+    {
+      "item": "toor dal",
+      "product_id": "dal-moong-500g",
+      "correct": false
+    },
+    {
+      "item": "dal",
+      "product_id": "dal-tata-toor-1kg",
+      "correct": true
+    }
+  ]
+}

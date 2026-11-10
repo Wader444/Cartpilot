@@ -1,0 +1,160 @@
+{
+  "_note": "20 fixed evaluation baskets. 'expected' is for Member B's hand-labelled cheapest split (platform per item) – fill it in to check the optimizer. Faults are injected into the mock store.",
+  "baskets": [
+    {
+      "id": "b01",
+      "text": "Weekly groceries for 2 people, vegetarian, under ₹1,200, delivered before 8 PM.",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b02",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b03",
+      "text": "Weekly groceries for 4 people, vegetarian, under ₹2,500, before 9 PM",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b04",
+      "text": "Weekly groceries for 1 person, vegan, under ₹900, before 8 PM",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b05",
+      "text": "1 litre milk and bread, budget 150, before 9 pm",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b06",
+      "text": "2 kg rice, 1 kg sugar, 1 L oil, 1 kg toor dal, budget 900, by 10 pm",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b07",
+      "text": "6 eggs, 500 g chicken, 1 kg onion, 1 kg tomato, non-veg, budget 600, before 9 pm",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b08",
+      "text": "only Amul milk 2 litre, Amul butter, 400 g curd, budget 400, before 9 pm",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b09",
+      "text": "500 g tea, 100 g coffee, 800 g biscuits, budget 800, before 9 pm",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b10",
+      "text": "1 kg detergent, 500 ml dishwash, 12 maggi, budget 600, before 9 pm",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b11",
+      "text": "Weekly groceries for 2 people, vegetarian, under ₹400, before 8 PM",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b12",
+      "text": "1 kg rice and 1 litre milk, budget 300, within 30 minutes",
+      "fault": null,
+      "expected": null
+    },
+    {
+      "id": "b13",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "fault": {
+        "kind": "out_of_stock",
+        "target": "chosen:milk",
+        "after_calls": 1
+      },
+      "expected": null
+    },
+    {
+      "id": "b14",
+      "text": "Weekly groceries for 2 people, vegetarian, under ₹1,200, delivered before 8 PM.",
+      "fault": {
+        "kind": "out_of_stock",
+        "target": "chosen:paneer",
+        "after_calls": 1
+      },
+      "expected": null
+    },
+    {
+      "id": "b15",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "fault": {
+        "kind": "price_change",
+        "target": "chosen:atta",
+        "after_calls": 1,
+        "delta": 40
+      },
+      "expected": null
+    },
+    {
+      "id": "b16",
+      "text": "Weekly groceries for 2 people, vegetarian, under ₹1,200, delivered before 8 PM.",
+      "fault": {
+        "kind": "fee_spike",
+        "target": "chosen_platform:first",
+        "after_calls": 1,
+        "value": 45
+      },
+      "expected": null
+    },
+    {
+      "id": "b17",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "fault": {
+        "kind": "eta",
+        "target": "chosen_platform:first",
+        "after_calls": 1,
+        "value": 400
+      },
+      "expected": null
+    },
+    {
+      "id": "b18",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "fault": {
+        "kind": "timeout",
+        "platform": "blinkit"
+      },
+      "expected": null
+    },
+    {
+      "id": "b19",
+      "text": "200 g paneer and 1 litre milk, vegetarian, budget 500, before 9 pm",
+      "fault": {
+        "kind": "out_of_stock_all",
+        "skus": [
+          "paneer-amul-200g",
+          "paneer-milkymist-200g"
+        ]
+      },
+      "expected": null
+    },
+    {
+      "id": "b20",
+      "text": "Weekly groceries for 3 people, eggetarian, under ₹2,000, before 9 PM",
+      "fault": {
+        "kind": "invalid_response",
+        "platform": "zepto"
+      },
+      "expected": null
+    }
+  ]
+}
