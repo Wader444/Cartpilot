@@ -1,0 +1,5 @@
+# Graph path (matching.py) and the seed runner need the Neo4j driver;
+# python-dotenv lets both find the .env at the project root.
+# The adapter, price history and test baskets are stdlib-only.
+neo4j>=5.0
+python-dotenv>=1.0

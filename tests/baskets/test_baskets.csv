@@ -1,0 +1,36 @@
+# CartPilot — 20 fixed test baskets (Member B, implementation.md Phase 19-22)
+#
+# How to use: run `python cartpilot-test-baskets.py` (same folder). It loads
+# the starter catalog through the PlatformAdapter, computes for each basket
+# the best single-platform landed cost vs the best split, checks the
+# hand-labelled splits, measures matching accuracy, and runs the guardrail
+# checks. Results go to cartpilot-test-baskets-results.json.
+#
+# Items use canonical product keys (ATTA, RICE, DAL, MILK, OIL, TOMATO,
+# POTATO, CURD, EGGS, SUGAR); the runner resolves each key to the platform's
+# listing id. budget_inr / diet / deadline_mins empty = no constraint.
+# expected_split is hand-labelled for 5 baskets (B01, B02, B04, B07, B14):
+# format is "single:<platform>" or "split:<platform>+<platform>" listing
+# the platforms the chosen plan actually uses, in alphabetical order.
+# Prices are the mock starter catalog (cartpilot-starter-catalog.csv).
+basket_id,name,items,budget_inr,diet,deadline_mins,test_type,expected_split,notes
+B01,weekly-2-veg,ATTA:1;RICE:1;DAL:1;MILK:1;OIL:1;TOMATO:1,1200,veg,120,savings,single:zepto,The 6-item demo basket; veg household of 2
+B02,small-topup,MILK:1;TOMATO:1;POTATO:1,300,,,savings,single:zepto,Small top-up; small-cart fees matter here
+B03,large-family,ATTA:2;RICE:2;DAL:1;OIL:2;SUGAR:1;POTATO:1,2000,,,savings,,Large family weekly shop
+B04,veg-weekly,ATTA:1;RICE:1;DAL:1;MILK:1;OIL:1;TOMATO:1;POTATO:1;CURD:1,1200,veg,,savings,single:blinkit,8-item veg basket incl. curd
+B05,budget-tight,RICE:1;DAL:1;POTATO:1;SUGAR:1,400,,,guardrail-budget,,Tight budget; cheapest plan must fit or be flagged
+B06,breakfast,MILK:2;EGGS:1;SUGAR:1,500,,,savings,,Eggs are non-veg; no diet constraint on this one
+B07,oos-curd,CURD:1;MILK:1;TOMATO:1,500,,,guardrail-oos,single:blinkit,Curd is out of stock on Zepto; agent must re-plan, not fail
+B08,oos-eggs,EGGS:1;ATTA:1;OIL:1,800,,,guardrail-oos,,Eggs are out of stock on Instamart; agent must re-plan, not fail
+B09,single-item,MILK:1,200,,,savings,,Edge case: one item; splitting must never win
+B10,pantry,ATTA:1;RICE:1;DAL:1;OIL:1;SUGAR:1,1000,,,savings,,Pantry staples only
+B11,dairy-heavy,MILK:3;CURD:2,600,,,savings,,Dairy-heavy; curd OOS on Zepto matters
+B12,veg-no-dairy,ATTA:1;RICE:1;DAL:1;TOMATO:1;POTATO:1;OIL:1,1000,veg,,savings,,Veg, no dairy; diet constraint must hold
+B13,deadline-tight,MILK:1;TOMATO:1;POTATO:1,300,,15,guardrail-deadline,,15-min deadline; Instamart ETA 25 must be excluded
+B14,big-offers,ATTA:2;RICE:2;DAL:2;OIL:1;SUGAR:2,2000,,,savings,split:instamart+zepto,Big basket; offer thresholds (min spend) in play
+B15,mixed-veg,TOMATO:1;POTATO:1;CURD:1;MILK:1,500,veg,,savings,,Small veg basket with curd
+B16,dal-rice,RICE:2;DAL:2,600,,,savings,,Two staples only
+B17,oil-sugar,OIL:1;SUGAR:1;ATTA:1,700,,,savings,,Three staples
+B18,eggs-dairy,EGGS:1;MILK:1;CURD:1,400,,,savings,,Eggs + dairy; no diet constraint
+B19,festival,ATTA:2;RICE:1;DAL:1;OIL:1;SUGAR:2;POTATO:1,1500,,,savings,,Festival-size shop
+B20,minimal,SUGAR:1,200,,,savings,,Edge case: one cheap item; small-cart fee dominates
