@@ -1,0 +1,40 @@
+platform,product_id,name,brand,quantity_value,quantity_unit,category,diet_tag,price,mrp,in_stock,eta_mins
+blinkit,BLK-ATTA-5KG,Aashirvaad Whole Wheat Atta 5kg,Aashirvaad,5,kg,staples,veg,289,310,True,12
+blinkit,BLK-RICE-1KG,India Gate Basmati Rice 1kg,India Gate,1,kg,staples,veg,145,155,True,12
+blinkit,BLK-DAL-1KG,Tata Sampann Toor Dal 1kg,Tata Sampann,1,kg,staples,veg,178,195,True,12
+blinkit,BLK-MILK-1L,Amul Toned Milk 1L,Amul,1,L,dairy,veg,56,60,True,12
+blinkit,BLK-OIL-1L,Fortune Sunflower Oil 1L,Fortune,1,L,staples,veg,168,185,True,12
+blinkit,BLK-TOMATO-1KG,Tomato 1kg,,1,kg,produce,veg,38,45,True,12
+blinkit,BLK-POTATO-1KG,Potato 1kg,,1,kg,produce,veg,32,38,True,12
+blinkit,BLK-CURD-400G,Amul Curd 400g,Amul,400,g,dairy,veg,32,35,True,12
+blinkit,BLK-EGGS-12,Eggs 12 pcs,,12,piece,eggs,non-veg,78,85,True,12
+blinkit,BLK-SUGAR-1KG,Sugar 1kg,,1,kg,staples,veg,48,55,True,12
+zepto,ZEP-ATTA-5KG,Aashirvaad Atta - Whole Wheat 5 kg,Aashirvaad,5,kg,staples,veg,279,310,True,10
+zepto,ZEP-RICE-1KG,India Gate Basmati Rice 1 kg,India Gate,1,kg,staples,veg,139,155,True,10
+zepto,ZEP-DAL-1KG,Tata Sampann Toor Dal 1 kg,Tata Sampann,1,kg,staples,veg,182,195,True,10
+zepto,ZEP-MILK-1L,Amul Toned Milk 1000ml,Amul,1,L,dairy,veg,54,60,True,10
+zepto,ZEP-OIL-1L,Fortune Sunflower Oil 1 L,Fortune,1,L,staples,veg,175,185,True,10
+zepto,ZEP-TOMATO-1KG,Tomato 1 kg,,1,kg,produce,veg,42,45,True,10
+zepto,ZEP-POTATO-1KG,Potato 1 kg,,1,kg,produce,veg,30,38,True,10
+zepto,ZEP-CURD-400G,Amul Curd 400 g,Amul,400,g,dairy,veg,34,35,False,10
+zepto,ZEP-EGGS-12,Eggs 12 pcs,,12,piece,eggs,non-veg,82,85,True,10
+zepto,ZEP-SUGAR-1KG,Sugar 1 kg,,1,kg,staples,veg,45,55,True,10
+instamart,INS-ATTA-5KG,Whole Wheat Atta 5kg - Aashirvaad,Aashirvaad,5,kg,staples,veg,299,310,True,25
+instamart,INS-RICE-1KG,Basmati Rice 1kg - India Gate,India Gate,1,kg,staples,veg,152,155,True,25
+instamart,INS-DAL-1KG,Toor Dal 1kg - Tata Sampann,Tata Sampann,1,kg,staples,veg,172,195,True,25
+instamart,INS-MILK-1L,Toned Milk 1 L - Amul,Amul,1,L,dairy,veg,58,60,True,25
+instamart,INS-OIL-1L,Sunflower Oil 1L - Fortune,Fortune,1,L,staples,veg,162,185,True,25
+instamart,INS-TOMATO-1KG,Tomato 1kg,,1,kg,produce,veg,35,45,True,25
+instamart,INS-POTATO-1KG,Potato 1kg,,1,kg,produce,veg,36,38,True,25
+instamart,INS-CURD-400G,Curd 400g - Amul,Amul,400,g,dairy,veg,30,35,True,25
+instamart,INS-EGGS-12,Eggs 12 pcs,,12,piece,eggs,non-veg,75,85,False,25
+instamart,INS-SUGAR-1KG,Sugar 1kg,,1,kg,staples,veg,52,55,True,25
+blinkit,BLK-MASOOR-1KG,Tata Sampann Masoor Dal 1kg,Tata Sampann,1,kg,staples,veg,158,175,True,12
+zepto,ZEP-MASOOR-1KG,Tata Sampann Masoor Dal 1 kg,Tata Sampann,1,kg,staples,veg,162,175,True,10
+instamart,INS-MASOOR-1KG,Masoor Dal 1kg - Tata Sampann,Tata Sampann,1,kg,staples,veg,154,175,True,25
+blinkit,BLK-GROUNDNUT-OIL-1L,Fortune Groundnut Oil 1L,Fortune,1,L,staples,veg,188,205,True,12
+zepto,ZEP-GROUNDNUT-OIL-1L,Fortune Groundnut Oil 1 L,Fortune,1,L,staples,veg,195,205,True,10
+instamart,INS-GROUNDNUT-OIL-1L,Groundnut Oil 1L - Fortune,Fortune,1,L,staples,veg,182,205,True,25
+blinkit,BLK-SONA-1KG,India Gate Sona Masoori Rice 1kg,India Gate,1,kg,staples,veg,72,80,True,12
+zepto,ZEP-SONA-1KG,India Gate Sona Masoori Rice 1 kg,India Gate,1,kg,staples,veg,68,80,True,10
+instamart,INS-SONA-1KG,Sona Masoori Rice 1kg - India Gate,India Gate,1,kg,staples,veg,75,80,True,25

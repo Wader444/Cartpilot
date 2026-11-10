@@ -18,7 +18,7 @@ from app.core.models import ApprovalDecision, ApprovalRequest, Platform  # noqa:
 from app.memory.database import Database  # noqa: E402
 from app.planner.orchestrator import CartPilotOrchestrator  # noqa: E402
 
-GOAL = "Weekly groceries for 2 people, vegetarian, under ₹1,200, delivered before 8 PM."
+GOAL = "Weekly groceries for 4 people, vegetarian, under ₹2,500, delivered before 9 PM."
 
 
 def show(p):
@@ -38,9 +38,10 @@ def main():
     settings = reset_settings(database_url="sqlite://")
     o = CartPilotOrchestrator(settings=settings, db=Database("sqlite://"), clock=Clock(fixed_now="17:00"))
 
-    # Faults for the story: milk goes out of stock and Blinkit adds a ₹40 rain fee at verification.
-    store.add_fault(Fault(kind="out_of_stock", platform=Platform.ZEPTO, sku_id="milk-nandini-500ml", after_calls=1))
-    store.add_fault(Fault(kind="fee_spike", platform=Platform.BLINKIT, after_calls=1, value=40))
+    # Faults for the story: curd goes out of stock on Zepto and Blinkit adds a ₹15 surge
+    # between planning and verification. The Auditor catches both and the agent re-plans.
+    store.add_fault(Fault(kind="out_of_stock", platform=Platform.ZEPTO, sku_id="curd-amul-400g", after_calls=1))
+    store.add_fault(Fault(kind="fee_spike", platform=Platform.BLINKIT, after_calls=1, value=15))
 
     print(f"GOAL: {GOAL}")
     s = o.start(GOAL)
@@ -59,7 +60,7 @@ def main():
     print("  learned:", ", ".join(f"{c.kind}={c.value}" for c in changes))
 
     store.clear_faults()
-    s2 = o.start("Weekly groceries, under ₹1,200, before 8 PM")
+    s2 = o.start("Weekly groceries, under ₹2,500, before 9 PM")
     print(f"\nNEXT WEEK: '{s2.request.raw_text}' → items from {s2.request.items_source}, "
           f"diet={s2.request.dietary_preference.value if s2.request.dietary_preference else None}")
     print("  memory notes:", *s2.memory_notes[:3], sep="\n   - ")
