@@ -26,6 +26,7 @@ import pandas as pd
 import streamlit as st
 
 from api_client import (
+    BACKEND_MODE,
     DEMO_GOAL,
     USE_MOCK,
     ApiError,
@@ -301,7 +302,10 @@ def _plan(fn, *args):
     except ApiError as e:
         st.error(f"Agent Error: {e.message}")
     except Exception as e:
-        st.error(f"Couldn't reach the planner: {e}. Please ensure the API is running.")
+        if BACKEND_MODE == "in_process":
+            st.error(f"Couldn't process the request: {e}. The embedded planner is unavailable.")
+        else:
+            st.error(f"Couldn't reach the planner: {e}. Start the API or set CARTPILOT_UI_MODE=in_process.")
 
 
 col_btn, col_info = st.columns([1, 3])

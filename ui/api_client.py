@@ -18,16 +18,30 @@ Backend endpoints used (see http://localhost:8000/docs):
 from __future__ import annotations
 
 import os
+import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 import httpx
 
 from mock_data import SAMPLE_PROPOSAL
 
-USE_MOCK = os.getenv("USE_MOCK", "1") == "1"
+USE_MOCK = os.getenv("USE_MOCK", "0") == "1"
 API_URL = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
 TIMEOUT = float(os.getenv("API_TIMEOUT", "60"))
+BACKEND_MODE = os.getenv("CARTPILOT_UI_MODE", "auto").strip().lower()
+if BACKEND_MODE not in {"auto", "remote", "in_process"}:
+    BACKEND_MODE = "auto"
+_in_process_client = None
+
+# Streamlit loads this file with ``ui`` early on sys.path. Put the repository
+# root first so ``app.main`` resolves to the backend package, not ui/app.py.
+_ROOT = Path(__file__).resolve().parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+if "app" in sys.modules and not hasattr(sys.modules["app"], "__path__"):
+    del sys.modules["app"]
 
 PLATFORM_NAMES = {"blinkit": "Blinkit", "zepto": "Zepto", "instamart": "Swiggy Instamart"}
 
@@ -49,9 +63,7 @@ class ApiError(Exception):
         self.status, self.code, self.message = status, code, message
 
 
-# --------------------------------------------------------------------------- HTTP
-def _call(method: str, path: str, json: Optional[dict] = None) -> dict:
-    resp = httpx.request(method, f"{API_URL}{path}", json=json, timeout=TIMEOUT)
+def _raise_for_status(resp: httpx.Response) -> None:
     if resp.status_code >= 400:
         try:
             detail = resp.json().get("detail", {})
@@ -62,7 +74,41 @@ def _call(method: str, path: str, json: Optional[dict] = None) -> dict:
         else:  # FastAPI request-validation errors are a list
             code, msg = "INVALID_INPUT", str(detail)
         raise ApiError(resp.status_code, code, str(msg))
+
+
+def _remote_call(method: str, path: str, json: Optional[dict] = None) -> dict:
+    resp = httpx.request(method, f"{API_URL}{path}", json=json, timeout=TIMEOUT)
+    _raise_for_status(resp)
     return resp.json()
+
+
+def _in_process_call(method: str, path: str, json: Optional[dict] = None) -> dict:
+    global _in_process_client
+    if _in_process_client is None:
+        from fastapi.testclient import TestClient
+
+        from app.main import create_app
+
+        _in_process_client = TestClient(create_app())
+    resp = _in_process_client.request(method, path, json=json)
+    _raise_for_status(resp)
+    return resp.json()
+
+
+def _call(method: str, path: str, json: Optional[dict] = None) -> dict:
+    """Call the backend remotely, or use the embedded API on Streamlit Cloud.
+
+    ``auto`` keeps local/Docker deployments remote while recovering from the
+    expected missing-localhost-API condition on Streamlit Cloud.
+    """
+    if BACKEND_MODE == "in_process":
+        return _in_process_call(method, path, json)
+    try:
+        return _remote_call(method, path, json)
+    except (httpx.ConnectError, httpx.ConnectTimeout):
+        if BACKEND_MODE == "remote":
+            raise
+        return _in_process_call(method, path, json)
 
 
 # --------------------------------------------------------------------------- mapping

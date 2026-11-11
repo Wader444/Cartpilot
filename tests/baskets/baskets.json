@@ -3,25 +3,25 @@
   "baskets": [
     {
       "id": "b01",
-      "text": "Weekly groceries for 2 people, vegetarian, under ₹1,200, delivered before 8 PM.",
+      "text": "Weekly groceries for 2 people, vegetarian, under \u20b91,200, delivered before 8 PM.",
       "fault": null,
       "expected": null
     },
     {
       "id": "b02",
-      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget \u20b91,200. Deliver before 8 PM.",
       "fault": null,
       "expected": null
     },
     {
       "id": "b03",
-      "text": "Weekly groceries for 4 people, vegetarian, under ₹2,500, before 9 PM",
+      "text": "Weekly groceries for 4 people, vegetarian, under \u20b92,500, before 9 PM",
       "fault": null,
       "expected": null
     },
     {
       "id": "b04",
-      "text": "Weekly groceries for 1 person, vegan, under ₹900, before 8 PM",
+      "text": "Weekly groceries for 1 person, vegan, under \u20b9900, before 8 PM",
       "fault": null,
       "expected": null
     },
@@ -63,7 +63,7 @@
     },
     {
       "id": "b11",
-      "text": "Weekly groceries for 2 people, vegetarian, under ₹400, before 8 PM",
+      "text": "Weekly groceries for 2 people, vegetarian, under \u20b9400, before 8 PM",
       "fault": null,
       "expected": null
     },
@@ -75,7 +75,7 @@
     },
     {
       "id": "b13",
-      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget ₹1,200. Deliver before 8 PM.",
+      "text": "Buy 2 kg atta, 1 litre milk and 1 kg rice. Vegetarian. Budget \u20b91,200. Deliver before 8 PM.",
       "fault": {
         "kind": "out_of_stock",
         "target": "chosen:milk",

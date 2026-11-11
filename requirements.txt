@@ -7,5 +7,7 @@ python-dotenv>=1.0
 pytest>=8.0
 # Optional (teammates): neo4j (Member B), ortools (Member C), langgraph (not required – custom state machine used)
 streamlit>=1.30      # Member C UI
+altair>=5.0          # Streamlit charts
+pandas>=2.0          # Streamlit tables and analytics
 neo4j>=5.0           # Member B graph path (optional at runtime: falls back to similarity)
 ortools>=9.10   # Member C optimizer (CP-SAT); without it the split search is used

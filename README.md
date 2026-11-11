@@ -80,6 +80,16 @@ USE_MOCK=0 python -m streamlit run ui/app.py
 In the UI sidebar, click **Load demo basket**, tick **Inject demo faults**, then click **Plan my cart**. Open **Agent trace** to see the re-plan, then click **Approve and prepare carts**.
 API docs (Swagger): http://127.0.0.1:8000/docs
 
+### Streamlit Community Cloud
+
+For a Streamlit-only deployment, set the main file to `ui/app.py`. The UI
+uses `CARTPILOT_UI_MODE=auto` by default: it uses a running FastAPI service
+when available and automatically embeds the same backend when Streamlit Cloud
+cannot reach `localhost:8000`. Set `USE_MOCK=0` to exercise the real planner
+and keep the built-in mock catalog; no LLM, Neo4j, or store API is required.
+For a fully explicit Cloud configuration, add `CARTPILOT_UI_MODE=in_process`
+to the app's environment/secrets.
+
 ---
 
 ## How it works
