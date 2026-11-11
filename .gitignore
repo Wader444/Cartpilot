@@ -1,5 +1,6 @@
 *.pyc
 .env
+.env.*
 .pytest_cache/
 .venv/
 /docs
@@ -7,3 +8,17 @@ __pycache__/
 cartpilot.db
 reports/
 tests/baskets/test_baskets_results.json
+
+# Local agent & IDE directories
+.agents/
+.vscode/
+.idea/
+*.log
+
+# Member scratch directories
+Member B/
+Member*/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

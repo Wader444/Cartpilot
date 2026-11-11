@@ -115,7 +115,7 @@ class IntentAgent:
 
         # budget -------------------------------------------------------------
         budget = None
-        amount = r"\s*[:\-]?\s*(?:rs\.?|inr|₹)?\s*(\d[\d,]*(?:\.\d+)?)\s*(k\b)?(?!\s*(?:min|hour|hr|h\b|kg|g\b|l\b|ml|litre|liter|pcs))\s*(?:rs\.?|rupees|inr|/-)?"
+        amount = r"\s*[:\-]?\s*(?:rs\.?|inr|₹|\?|rupees)?\s*(\d[\d,]*(?:\.\d+)?)\s*(k\b)?(?!\s*(?:min|hour|hr|h\b|kg|g\b|l\b|ml|litre|liter|pcs))\s*(?:rs\.?|rupees|inr|/-|bucks)?"
         bre_strong = re.compile(r"budget(?:\s+(?:of|is))?" + amount, re.I)
         bre = re.compile(r"(?:under|below|within|max(?:imum)?|up\s*to|upto|less\s+than|"
                          r"not\s+more\s+than|spend(?:ing)?(?:\s+at\s+most)?)" + amount, re.I)
@@ -124,7 +124,7 @@ class IntentAgent:
             budget = float(m.group(1).replace(",", "")) * (1000 if m.group(2) else 1)
             take(m)
         else:
-            m = re.search(r"(?:₹|rs\.?\s*|inr\s*)(\d[\d,]*(?:\.\d+)?)\s*(?:budget)", s, re.I)
+            m = re.search(r"(?:₹|\?|rs\.?\s*|inr\s*)(\d[\d,]*(?:\.\d+)?)\s*(?:budget)", s, re.I)
             if m:
                 budget = float(m.group(1).replace(",", ""))
                 take(m)

@@ -48,14 +48,18 @@ All figures are on mock data and can be reproduced with the commands below.
 Requires Python 3.11+ (tested on 3.13, macOS).
 
 ```bash
-git clone https://github.com/thisisraviteja1/Cartpilot.git && cd Cartpilot
-python3 -m venv .venv && source .venv/bin/activate
+git clone https://github.com/Wader444/Cartpilot.git && cd Cartpilot
+python -m venv .venv
+# On Windows: .venv\Scripts\Activate.ps1
+# On macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Everything in one go.** This runs the tests, data checks, demo story, evaluation and a live API walkthrough, then opens the UI:
+**Everything in one go (Cross-Platform):**
+This validates tests, data graph checks, demo story, evaluation, and starts the API & Streamlit UI together:
 ```bash
-bash scripts/run_all.sh
+python scripts/run_all.py     # Works on Windows, macOS, and Linux
+# Alternatively on macOS/Linux: bash scripts/run_all.sh
 ```
 
 **Or step by step:**

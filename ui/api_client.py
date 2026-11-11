@@ -197,6 +197,26 @@ def get_trace(session_id: str) -> dict:
     return _call("GET", f"/api/shopping/{session_id}/trace")
 
 
+def get_health() -> dict:
+    return _call("GET", "/health")
+
+
+def get_preferences(user_id: str = "demo-user") -> dict:
+    return _call("GET", f"/api/memory/preferences?user_id={user_id}")
+
+
+def get_episodes(user_id: str = "demo-user", limit: int = 10) -> dict:
+    return _call("GET", f"/api/memory/episodes?user_id={user_id}&limit={limit}")
+
+
+def get_pantry(user_id: str = "demo-user") -> dict:
+    return _call("GET", f"/api/memory/pantry?user_id={user_id}")
+
+
+def get_reminders(user_id: str = "demo-user") -> dict:
+    return _call("GET", f"/api/reminders?user_id={user_id}")
+
+
 # --------------------------------------------------------------------------- demo faults
 DEMO_GOAL = "Weekly groceries for 4 people, vegetarian, under ₹2,500, delivered before 9 PM."
 DEMO_FAULTS = [  # curd goes out of stock on Zepto and Blinkit adds a ₹15 surge between planning and verification
