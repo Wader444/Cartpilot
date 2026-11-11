@@ -31,3 +31,4 @@ EXPOSE 8501 8000
 
 # Start both services via the unified runner
 CMD ["python", "scripts/run_all.py"]
+

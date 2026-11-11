@@ -87,7 +87,6 @@ def main() -> None:
         run_step([sys.executable, "scripts/evaluate.py"], "4. 20-BASKET EVALUATION")
     else:
         print("⏩ Skipping test suite and evaluation (SKIP_TESTS_ON_START=1 set for fast cloud boot).")
-    run_step([sys.executable, "scripts/evaluate.py"], "4. 20-BASKET EVALUATION")
 
     # 5. Start API Server
     banner("5. STARTING LIVE FASTAPI BACKEND")

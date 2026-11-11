@@ -7,6 +7,20 @@ interactive Altair analytics, and visual agent lifecycle stepper.
 """
 from __future__ import annotations
 
+import sys
+import os
+from pathlib import Path
+
+# ── Path bootstrap ──────────────────────────────────────────────────────────
+# Works in both Streamlit Cloud (runs `streamlit run ui/app.py` from repo root)
+# and locally (run from repo root or from ui/ directory).
+_HERE = Path(__file__).resolve().parent          # .../ui/
+_ROOT = _HERE.parent                              # .../Cartpilot/
+for _p in (_HERE, _ROOT):
+    _ps = str(_p)
+    if _ps not in sys.path:
+        sys.path.insert(0, _ps)
+
 import altair as alt
 import pandas as pd
 import streamlit as st
@@ -453,24 +467,31 @@ if proposal:
         else:
             # Edit Expander
             with st.expander("✏️ Customize Plan Before Approving"):
-                all_items = sorted({line["request_item"] for plat in proposal["platforms"] for line in plat["cart"]})
+                all_items = sorted({
+                    line.get("request_item", line["product"]["name"])
+                    for plat in proposal["platforms"]
+                    for line in plat["cart"]
+                })
                 remove = st.multiselect("Remove items from plan", all_items, key="edit_remove")
                 new_budget = st.number_input("Adjust budget (₹, 0 = keep)", min_value=0, step=100, value=0, key="edit_budget")
                 avoid_brands = st.text_input("Brands to avoid (comma-separated)", key="edit_brands")
                 if st.button("Re-Optimize with Edits", key="edit_go"):
-                    changes = {}
-                    if remove:
-                        changes["remove_items"] = list(remove)
-                    if new_budget:
-                        changes["budget"] = float(new_budget)
-                    if avoid_brands.strip():
-                        changes["reject_brands"] = [b.strip() for b in avoid_brands.split(",") if b.strip()]
-                    if not changes:
-                        st.warning("Select at least one change.")
+                    if USE_MOCK:
+                        st.info("✏️ **Demo mode:** Edit simulation — in live mode this triggers a full re-plan via the backend.")
                     else:
-                        with st.spinner("Re-optimizing plan..."):
-                            _plan(edit, proposal["session_id"], proposal["proposal_id"], changes)
-                        st.rerun()
+                        changes = {}
+                        if remove:
+                            changes["remove_items"] = list(remove)
+                        if new_budget:
+                            changes["budget"] = float(new_budget)
+                        if avoid_brands.strip():
+                            changes["reject_brands"] = [b.strip() for b in avoid_brands.split(",") if b.strip()]
+                        if not changes:
+                            st.warning("Select at least one change.")
+                        else:
+                            with st.spinner("Re-optimizing plan..."):
+                                _plan(edit, proposal["session_id"], proposal["proposal_id"], changes)
+                            st.rerun()
 
             if not proposal.get("approvable"):
                 st.error("This proposal cannot be approved as-is (over budget or no stock). Please edit above.")
@@ -480,8 +501,9 @@ if proposal:
                     for line in plat["cart"]:
                         if line.get("requires_confirmation"):
                             pid = line["listing"]["product_id"]
+                            item_name = line.get("request_item", line["product"]["name"])
                             if st.checkbox(
-                                f"Confirm substitute: **{line['product']['name']}** for *'{line['request_item']}'* on {plat['platform']}",
+                                f"Confirm substitute: **{line['product']['name']}** for *'{item_name}'* on {plat['platform']}",
                                 key=f"confirm_{pid}"
                             ):
                                 confirmed.append(pid)
@@ -490,26 +512,51 @@ if proposal:
                 col_app, col_rej = st.columns([1, 1])
                 with col_app:
                     if st.button("✅ Approve & Prepare Carts", type="primary", use_container_width=True, key="approve"):
-                        try:
-                            r = approve(proposal["session_id"], proposal["proposal_id"], confirmed, 7 if remind else None)
+                        if USE_MOCK:
+                            # Mock approval – simulate the prepared carts response
+                            mock_carts = [
+                                {
+                                    "platform": plat["platform"],
+                                    "cart_ref": f"MOCK-{plat['platform'].upper()[:3]}-{proposal['proposal_id'][-4:]}",
+                                    "lines": plat["cart"],
+                                    "payment_executed": False,
+                                    "order_placed": False,
+                                }
+                                for plat in proposal["platforms"]
+                            ]
                             st.session_state["decision"] = {
                                 "kind": "approved",
-                                "message": r["message"],
-                                "carts": r["session"]["prepared_carts"],
+                                "message": f"Prepared {len(mock_carts)} cart(s). No payment was made and no order was placed – open each app to review and pay.",
+                                "carts": mock_carts,
                                 "reminders": ["Reorder in 7 days"] if remind else [],
                             }
-                        except ApiError as e:
-                            st.error(e.message)
+                        else:
+                            try:
+                                r = approve(proposal["session_id"], proposal["proposal_id"], confirmed, 7 if remind else None)
+                                st.session_state["decision"] = {
+                                    "kind": "approved",
+                                    "message": r["message"],
+                                    "carts": r["session"]["prepared_carts"],
+                                    "reminders": ["Reorder in 7 days"] if remind else [],
+                                }
+                            except ApiError as e:
+                                st.error(e.message)
                         st.rerun()
 
                 with col_rej:
                     r_reason = st.text_input("Reject reason (optional)", key="reject_reason", placeholder="e.g. items not needed")
                     if st.button("❌ Reject Plan", use_container_width=True, key="reject"):
-                        try:
-                            r = reject(proposal["session_id"], proposal["proposal_id"], r_reason)
-                            st.session_state["decision"] = {"kind": "rejected", "message": r["message"]}
-                        except ApiError as e:
-                            st.error(e.message)
+                        if USE_MOCK:
+                            st.session_state["decision"] = {
+                                "kind": "rejected",
+                                "message": "Proposal rejected. Nothing was prepared.",
+                            }
+                        else:
+                            try:
+                                r = reject(proposal["session_id"], proposal["proposal_id"], r_reason)
+                                st.session_state["decision"] = {"kind": "rejected", "message": r["message"]}
+                            except ApiError as e:
+                                st.error(e.message)
                         st.rerun()
 
     # ------------------ TAB 2: ANALYTICS & SAVINGS (ALTAIR CHARTS)
