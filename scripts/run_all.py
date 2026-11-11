@@ -26,9 +26,10 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-API_PORT = 8000
-UI_PORT = 8501
-API_URL = f"http://127.0.0.1:{API_PORT}"
+API_PORT = int(os.getenv("API_PORT", "8000"))
+UI_PORT = int(os.getenv("PORT", os.getenv("UI_PORT", "8501")))
+API_URL = os.getenv("API_URL", f"http://127.0.0.1:{API_PORT}")
+SKIP_TESTS = os.getenv("SKIP_TESTS_ON_START", "0") == "1"
 
 
 def port_in_use(port: int) -> bool:
@@ -72,16 +73,20 @@ def main() -> None:
         if port_in_use(p):
             print(f"⚠️  Port {p} is currently in use. Existing process may already be running.")
 
-    # 1. Tests
-    run_step([sys.executable, "-m", "pytest", "-q"], "1. AUTOMATED TESTS (149 passing)")
+    if not SKIP_TESTS:
+        # 1. Tests
+        run_step([sys.executable, "-m", "pytest", "-q"], "1. AUTOMATED TESTS (149 passing)")
 
-    # 2. Member B Data Checks
-    run_step([sys.executable, "integration_check.py"], "2. DATA & GRAPH CHECKS")
+        # 2. Member B Data Checks
+        run_step([sys.executable, "integration_check.py"], "2. DATA & GRAPH CHECKS")
 
-    # 3. Demo Story
-    run_step([sys.executable, "scripts/demo.py"], "3. DEMO STORY (Fault Recovery & Split)")
+        # 3. Demo Story
+        run_step([sys.executable, "scripts/demo.py"], "3. DEMO STORY (Fault Recovery & Split)")
 
-    # 4. Evaluation
+        # 4. Evaluation
+        run_step([sys.executable, "scripts/evaluate.py"], "4. 20-BASKET EVALUATION")
+    else:
+        print("⏩ Skipping test suite and evaluation (SKIP_TESTS_ON_START=1 set for fast cloud boot).")
     run_step([sys.executable, "scripts/evaluate.py"], "4. 20-BASKET EVALUATION")
 
     # 5. Start API Server
@@ -143,7 +148,10 @@ def main() -> None:
     ui_env["API_URL"] = API_URL
 
     ui_proc = subprocess.Popen(
-        [sys.executable, "-m", "streamlit", "run", "ui/app.py", "--server.port", str(UI_PORT)],
+        [sys.executable, "-m", "streamlit", "run", "ui/app.py",
+         "--server.port", str(UI_PORT),
+         "--server.headless=true",
+         "--browser.gatherUsageStats=false"],
         env=ui_env, cwd=str(ROOT)
     )
 
